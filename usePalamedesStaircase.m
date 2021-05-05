@@ -127,7 +127,7 @@ for i = 1:length(setParams)
 
          % check that inputtted PF is accurate
       case 'PF'
-         if isempty(stairParams.PF) || ~isfield(stairParams,'PF')
+         if ~isfield(stairParams,'PF') || isempty(stairParams.PF)
             stairParams.PF = @arbWeibull;
             fprintf('PSYCHOMETRIC function: Set to arbWeibull (DEFAULT)\n');
          else
@@ -141,21 +141,21 @@ for i = 1:length(setParams)
 
          % check for proper beta
       case 'fitBeta'
-         if isempty(stairParams.fitBeta)|| ~isfield(stairParams,'fitBeta')
+         if ~isfield(stairParams,'fitBeta') || isempty(stairParams.fitBeta) 
             stairParams.fitBeta = 2;
             fprintf('BETA: Set to 2 (DEFAULT)\n');
          end
 
          % check for proper gamma
       case 'fitGamma'
-         if isempty(stairParams.fitGamma)|| ~isfield(stairParams,'fitGamma')
+         if ~isfield(stairParams,'fitGamma') || isempty(stairParams.fitGamma) 
             stairParams.fitGamma = 0.5;
             fprintf('GAMMA: Set to 0.5 (DEFAULT)\n');
          end
 
          % check for proper lambda
       case 'fitLambda'
-         if isempty(stairParams.fitLambda)|| ~isfield(stairParams,'fitLambda')
+         if ~isfield(stairParams,'fitLambda') || isempty(stairParams.fitLambda) 
             stairParams.fitLambda = 0.01;
             fprintf('LAMBDA: Set to 0.01 (DEFAULT)\n');
          end
