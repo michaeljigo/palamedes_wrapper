@@ -127,7 +127,7 @@ for i = 1:length(setParams)
 
          % check that inputtted PF is accurate
       case 'PF'
-         if isempty(stairParams.PF)
+         if isempty(stairParams.PF) || ~isfield(stairParams,'PF')
             stairParams.PF = @arbWeibull;
             fprintf('PSYCHOMETRIC function: Set to arbWeibull (DEFAULT)\n');
          else
@@ -141,21 +141,21 @@ for i = 1:length(setParams)
 
          % check for proper beta
       case 'fitBeta'
-         if isempty(stairParams.fitBeta)
+         if isempty(stairParams.fitBeta)|| ~isfield(stairParams,'fitBeta')
             stairParams.fitBeta = 2;
             fprintf('BETA: Set to 2 (DEFAULT)\n');
          end
 
          % check for proper gamma
       case 'fitGamma'
-         if isempty(stairParams.fitGamma)
+         if isempty(stairParams.fitGamma)|| ~isfield(stairParams,'fitGamma')
             stairParams.fitGamma = 0.5;
             fprintf('GAMMA: Set to 0.5 (DEFAULT)\n');
          end
 
          % check for proper lambda
       case 'fitLambda'
-         if isempty(stairParams.fitLambda)
+         if isempty(stairParams.fitLambda)|| ~isfield(stairParams,'fitLambda')
             stairParams.fitLambda = 0.01;
             fprintf('LAMBDA: Set to 0.01 (DEFAULT)\n');
          end
@@ -229,13 +229,13 @@ for i = 1:length(setParams)
 
       % trial number, after which, staircase will update
       case 'updateAfterTrial'
-         if isempty(stairParams.updateAfterTrial)
+         if isempty(stairParams.updateAfterTrial) || ~isfield(stairParams,'updateAfterTrial')
             stairParams.updateAfterTrial = 0;
          end
 
       % levels to display before the staircase gets updated
       case 'preUpdateLevels'
-         if isempty(stairParams.preUpdateLevels) 
+         if isempty(stairParams.preUpdateLevels) || ~isfield(stairParams,'preUpdateLevels')
             if stairParams.updateAfterTrial>0
                stairParams.preUpdateLevels = repmat(median(stairParams.alphaRange),1,stairParams.updateAfterTrial);
             else
