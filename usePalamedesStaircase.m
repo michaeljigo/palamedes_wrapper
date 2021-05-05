@@ -120,7 +120,7 @@ for i = 1:length(setParams)
 
       % setting possible threshold estimates
       case 'alphaRange'
-         if isempty(stairParams.alphaRange)
+         if ~isfield(stairParams,'alphaRange') || isempty(stairParams.alphaRange)
             stairParams.alphaRange = 0.01:0.01:1;
             fprintf('ALPHA RANGE: Set to 0.01:0.01:1 (DEFAULT)\n');
          end
@@ -229,13 +229,13 @@ for i = 1:length(setParams)
 
       % trial number, after which, staircase will update
       case 'updateAfterTrial'
-         if isempty(stairParams.updateAfterTrial) || ~isfield(stairParams,'updateAfterTrial')
+         if ~isfield(stairParams,'updateAfterTrial') || isempty(stairParams.updateAfterTrial) 
             stairParams.updateAfterTrial = 0;
          end
 
       % levels to display before the staircase gets updated
       case 'preUpdateLevels'
-         if isempty(stairParams.preUpdateLevels) || ~isfield(stairParams,'preUpdateLevels')
+         if ~isfield(stairParams,'preUpdateLevels') || isempty(stairParams.preUpdateLevels) 
             if stairParams.updateAfterTrial>0
                stairParams.preUpdateLevels = repmat(median(stairParams.alphaRange),1,stairParams.updateAfterTrial);
             else
