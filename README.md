@@ -2,7 +2,7 @@
 A handy wrapper function for the Palamedes toolbox, with a focus on using its adaptive procedures.
 You must have the Palamedes toolbox (http://www.palamedestoolbox.org/) installed and in your MATLAB path.
 
-In this repository you will find three functions:
+In this repository you will find:
 1. usePalamedesStaircase    : initializes and updates the desired staircase/adaptive protocol
 2. arbWeibull               : Weibull function with adjustable threshold performance level
 3. arbLogistic              : Logistic function with adjustable threshold performance level
