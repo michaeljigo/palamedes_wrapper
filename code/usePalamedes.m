@@ -1,5 +1,5 @@
 % ----------------------------------------------------------------------
-% [staircase, stairParams]=usePalamedesStaircase(stairParams,response)
+% [staircase, stairParams]=usePalamedes(stairParams,response)
 % ----------------------------------------------------------------------
 % Purpose:  Initialize and update adaptive procedures. 
 %           This function simply calls the Palamedes toolbox, but makes
@@ -27,6 +27,8 @@
 %     PF                : shape of underlying psychometric function. can be: PAL_Weibull, PAL_Quick, PAL_Gumbel, PAL_HyperbolicSecant, PAL_Logistic, or arbWeibull(default)
 %     updateAfterTrial  : if >0, the adaptive method will not use posterior-based estimates until the trial number matches the input for this variable (default=0)
 %     preUpdateLevels   : these are the stimulus levels that will be tested before the adaptive method is updated (only works if updateAfterTrial>1)
+%     questMean         : center of prior distribution for QUEST procedure
+%     questSD           : standard deviation of prior distribution for QUEST procedure
 % response              : 1=correct; 0=incorrect
 %
 % ----------------------------------------------------------------------
@@ -35,10 +37,10 @@
 % stairParams           : structure of parameters used to initialize Palamedes
 % ----------------------------------------------------------------------
 % Function created by Michael Jigo
-% Last update : Feb. 17 2021
+% Last update : July 10 2021
 % ----------------------------------------------------------------------
 
-function [staircase, stairParams] = usePalamedesStaircase(stairParams,response)
+function [staircase, stairParams] = usePalamedes(stairParams,response)
 
 if nargin==0
    %% Use default staircase parameters
@@ -82,7 +84,7 @@ function staircase = initStaircase(stairParams)
 switch stairParams.whichStair
    case 1 % best PEST
       % uniform prior with the mode selected as xCurrent
-      meanMode = 'mode';
+      meanMode = 'mean';
       prior = ones(1,length(stairParams.alphaRange));
       prior = prior/sum(prior); % make a uniform prior
    case 2 % QUEST
@@ -112,24 +114,27 @@ end
    
 function stairParams = validateParams(stairParams)
 % check if all parameters were set, if not, then set to the default
+paramnames = {'whichStair' 'alphaRange' 'fitBeta' 'fitLambda' 'fitGamma' 'threshPerformance' 'lastPosterior' 'PF' 'updateAfterTrial' 'preUpdateLevels'};
 setParams = fieldnames(stairParams);
 setParams = sort(setParams);
 
-for i = 1:length(setParams)
-   switch setParams{i}
+for i = 1:length(paramnames)
+   switch paramnames{i}
 
       % setting possible threshold estimates
       case 'alphaRange'
          if ~isfield(stairParams,'alphaRange') || isempty(stairParams.alphaRange)
             stairParams.alphaRange = 0.01:0.01:1;
-            fprintf('ALPHA RANGE: Set to 0.01:0.01:1 (DEFAULT)\n');
+            %fprintf('ALPHA RANGE: Set to 0.01:0.01:1 (DEFAULT)\n');
          end
 
-         % check that inputtted PF is accurate
+
+
+      % check that inputtted PF is accurate
       case 'PF'
          if ~isfield(stairParams,'PF') || isempty(stairParams.PF)
             stairParams.PF = @arbWeibull;
-            fprintf('PSYCHOMETRIC function: Set to arbWeibull (DEFAULT)\n');
+            %fprintf('PSYCHOMETRIC function: Set to arbWeibull (DEFAULT)\n');
          else
             if ~isa(stairParams.PF,'function_handle')
                stairParams.PF = eval(['@',stairParams.PF]);
@@ -139,42 +144,51 @@ for i = 1:length(setParams)
             end
          end
 
-         % check for proper beta
+
+
+      % check for proper beta
       case 'fitBeta'
          if ~isfield(stairParams,'fitBeta') || isempty(stairParams.fitBeta) 
             stairParams.fitBeta = 2;
-            fprintf('BETA: Set to 2 (DEFAULT)\n');
+            %fprintf('BETA: Set to 2 (DEFAULT)\n');
          end
 
-         % check for proper gamma
+
+
+      % check for proper gamma
       case 'fitGamma'
          if ~isfield(stairParams,'fitGamma') || isempty(stairParams.fitGamma) 
             stairParams.fitGamma = 0.5;
-            fprintf('GAMMA: Set to 0.5 (DEFAULT)\n');
+            %fprintf('GAMMA: Set to 0.5 (DEFAULT)\n');
          end
 
-         % check for proper lambda
+
+
+      % check for proper lambda
       case 'fitLambda'
          if ~isfield(stairParams,'fitLambda') || isempty(stairParams.fitLambda) 
             stairParams.fitLambda = 0.01;
-            fprintf('LAMBDA: Set to 0.01 (DEFAULT)\n');
+            %fprintf('LAMBDA: Set to 0.01 (DEFAULT)\n');
          end
 
-         % check if experimenter wants to continue staircase from
-         % previous run
+
+
+      % check if experimenter wants to continue staircase from
+      % previous run
       case 'lastPosterior'
-         if isempty(stairParams.lastPosterior)
+         if ~isfield(stairParams,'lastPosterior')
             stairParams.lastPosterior = [];
-         elseif ~isfield(stairParams,'lastPosterior')
+         elseif isempty(stairParams.lastPosterior)
             stairParams.lastPosterior = [];
          else
-            fprintf(['POSTERIOR: Staircase will continue from '...
-               'previously computed posterior.\n']);
+            %fprintf(['POSTERIOR: Staircase will continue from '...
+               %'previously computed posterior.\n']);
          end
 
 
-         % check if experimenter wants to use an arbritrary threshold
-         % performance
+
+      % check if experimenter wants to use an arbritrary threshold
+      % performance
       case 'threshPerformance'
          if isempty(stairParams.threshPerformance)
             stairParams.threshPerformance = 0.75;
@@ -186,7 +200,9 @@ for i = 1:length(setParams)
                'need to input that expected performance level.']);
          end
 
-         % choosing staircases
+
+
+      % choosing staircases
       case 'whichStair'
          if ismember(stairParams.whichStair,[1 2])
             if stairParams.whichStair==2
@@ -206,32 +222,36 @@ for i = 1:length(setParams)
                else
                   % set empty values to the default
                   for q = 1:length(emptyIdx)
-                     fprintf(['Setting ',questInput{emptyIdx(q)}, ' to ',...
-                        questDefault{emptyIdx(q)}, ' (DEFAULT)\n']);
-                  stairParams.(questInput{emptyIdx(q)}) = ...
+                     %fprintf(['Setting ',questInput{emptyIdx(q)}, ' to ',...
+                        %questDefault{emptyIdx(q)}, ' (DEFAULT)\n']);
+                  %stairParams.(questInput{emptyIdx(q)}) = ...
                      eval(questDefault{emptyIdx(q)});
                   end
                end
                else
                   % set the empty or the non-set input to the
                   % default
-                  fprintf(['Mean and SD of QUEST prior were not set. '...
-                     'Setting them to default.']);
+                  %fprintf(['Mean and SD of QUEST prior were not set. '...
+                     %'Setting them to default.']);
                   for q = 1:length(questInput)
                      stairParams.(questInput{q}) = eval(questDefault{q});
                   end
                end
             end
          else
-            fprintf('whichStair: Setting to use best PEST (DEFAULT)\n');
+            %fprintf('whichStair: Setting to use best PEST (DEFAULT)\n');
             stairParams.whichStair = 1;
          end
+
+
 
       % trial number, after which, staircase will update
       case 'updateAfterTrial'
          if ~isfield(stairParams,'updateAfterTrial') || isempty(stairParams.updateAfterTrial) 
             stairParams.updateAfterTrial = 0;
          end
+
+
 
       % levels to display before the staircase gets updated
       case 'preUpdateLevels'
