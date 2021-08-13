@@ -1,4 +1,5 @@
-function t3_calibrateProcedure
+function t3_calibrate
+   addpath('../code');
 
 % Here we go over how to calibrate the adaptive procedure to obtain consistently reliable thresholds.
 %

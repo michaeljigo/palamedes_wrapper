@@ -1,4 +1,5 @@
 function t1_setup
+   addpath('../code');
 
 % Here we go over how to set up the Palamedes structure and also highlight
 % the parameters that control the adaptive procedure's behavior during your experiment.

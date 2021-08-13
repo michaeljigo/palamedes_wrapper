@@ -1,4 +1,5 @@
 function t2_update
+   addpath('../code');
 
 % Here we go over how to update the adaptive procedure on a trial-by-trial basis.
 
