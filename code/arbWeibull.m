@@ -21,7 +21,6 @@
 %   interpreted as [alpha beta], a three element vector as [alpha beta
 %   gamma]. Missing elements in 'params' will be assigned a value of 0.
 %
-%
 % ----------------------------------------------------------------------
 % Function created by Michael Jigo
 % Last update : 2020-12-03

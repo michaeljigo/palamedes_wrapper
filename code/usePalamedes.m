@@ -83,12 +83,12 @@ function staircase = initStaircase(stairParams)
 % Initialize the staircase
 switch stairParams.whichStair
    case 1 % best PEST
-      % uniform prior with the mode selected as xCurrent
+      % uniform prior
       meanMode = 'mean';
       prior = ones(1,length(stairParams.alphaRange));
-      prior = prior/sum(prior); % make a uniform prior
+      prior = prior/sum(prior);
    case 2 % QUEST
-      % normally-distributed prior with the mean selected as xCurrent
+      % normal prior
       meanMode = 'mean';
       prior = PAL_pdfNormal(stairParams.alphaRange,stairParams.questMean,stairParams.questSD);
 end
@@ -114,9 +114,8 @@ end
    
 function stairParams = validateParams(stairParams)
 % check if all parameters were set, if not, then set to the default
-paramnames = {'whichStair' 'alphaRange' 'fitBeta' 'fitLambda' 'fitGamma' 'threshPerformance' 'lastPosterior' 'PF' 'updateAfterTrial' 'preUpdateLevels'};
+paramnames = {'whichStair' 'alphaRange' 'fitBeta' 'fitLambda' 'fitGamma' 'PF' 'threshPerformance' 'lastPosterior' 'updateAfterTrial' 'preUpdateLevels'};
 setParams = fieldnames(stairParams);
-setParams = sort(setParams);
 
 for i = 1:length(paramnames)
    switch paramnames{i}
@@ -132,7 +131,7 @@ for i = 1:length(paramnames)
 
       % check that inputtted PF is accurate
       case 'PF'
-         if ~isfield(stairParams,'PF') || isempty(stairParams.PF)
+         if isempty(stairParams.PF) || ~isfield(stairParams,'PF') 
             stairParams.PF = @arbWeibull;
             %fprintf('PSYCHOMETRIC function: Set to arbWeibull (DEFAULT)\n');
          else
@@ -257,7 +256,10 @@ for i = 1:length(paramnames)
       case 'preUpdateLevels'
          if ~isfield(stairParams,'preUpdateLevels') || isempty(stairParams.preUpdateLevels) 
             if stairParams.updateAfterTrial>0
-               stairParams.preUpdateLevels = repmat(median(stairParams.alphaRange),1,stairParams.updateAfterTrial);
+               %stairParams.preUpdateLevels = repmat(median(stairParams.alphaRange),1,stairParams.updateAfterTrial);
+               randidx                     = randperm(stairParams.updateAfterTrial);
+               stairParams.preUpdateLevels = linspace(min(stairParams.alphaRange),max(stairParams.alphaRange),stairParams.updateAfterTrial);
+               stairParams.preUpdateLevels = stairParams.preUpdateLevels(randidx);
             else
                stairParams.preUpdateLevels = [];
             end
